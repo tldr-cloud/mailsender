@@ -8,40 +8,24 @@ import (
 	secretmanagerpb "google.golang.org/genproto/googleapis/cloud/secretmanager/v1"
 )
 
-func accessSecretVersion(secretChannel chan string, errorChannel chan error, name string) {
+func accessSecretVersion(secretName string) (string, error) {
 	// Create the client.
 	ctx := context.Background()
 	client, err := secretmanager.NewClient(ctx)
 	if err != nil {
-		errorChannel <- errors.New(fmt.Sprint("failed to create secretmanager client: %v", err))
-		return
+		return "", errors.New(fmt.Sprint("failed to create secretmanager client: %v", err))
 	}
 
 	// Build the request.
 	req := &secretmanagerpb.AccessSecretVersionRequest{
-		Name: name,
+		Name: secretName,
 	}
 
 	// Call the API.
 	result, err := client.AccessSecretVersion(ctx, req)
 	if err != nil {
-		errorChannel <- errors.New(fmt.Sprint("failed to access secret version: %v", err))
-		return
+		return "", errors.New(fmt.Sprint("failed to access secret version: %v", err))
 	}
 
-	secretChannel <- string(result.Payload.Data)
+	return string(result.Payload.Data), nil
 }
-
-//func main() {
-//	secretChannel := make(chan string)
-//	errorChannel := make(chan error)
-//
-//	secretName := "projects/346496881273/secrets/postmarkapp-server-API-token/versions/latest"
-//	go accessSecretVersion(secretChannel, errorChannel, secretName)
-//	select {
-//		case secret := <-secretChannel:
-//			fmt.Print(secret)
-//		case err := <-errorChannel:
-//			log.Println(err.Error())
-//	}
-//}

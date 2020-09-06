@@ -4,34 +4,23 @@ import (
 	"github.com/keighl/postmark"
 )
 
-
-func postMail(serverToken string, accountToken string) error {
-	client := postmark.NewClient(serverToken, accountToken)
-
-	email := postmark.Email{
-		From:       "no-reply@example.com",
-		To:         "tito@example.com",
-		Subject:    "Reset your password",
-		HtmlBody:   "...",
-		TextBody:   "...",
-		Tag:        "pw-reset",
-		TrackOpens: true,
-	}
-
-	_, err = client.SendEmail(email)
+func main() {
+	serverApiSecretName := "projects/346496881273/secrets/postmarkapp-server-API-token/versions/latest"
+	accountApiSecretName := "projects/346496881273/secrets/postmarkapp-account-API-token/versions/latest"
+	serverApiSecret, err := accessSecretVersion( serverApiSecretName)
 	if err != nil {
 		panic(err)
 	}
-}
-
-
-func main() {
-	client := postmark.NewClient("[SERVER-TOKEN]", "[ACCOUNT-TOKEN]")
+	accountApiSecret, err := accessSecretVersion( accountApiSecretName)
+	if err != nil {
+		panic(err)
+	}
+	client := postmark.NewClient(serverApiSecret, accountApiSecret)
 
 	email := postmark.Email{
-		From:       "no-reply@example.com",
-		To:         "tito@example.com",
-		Subject:    "Reset your password",
+		From:       "do-not-reply@tldr.cloud",
+		To:         "viacheslav@kovalevskyi.com",
+		Subject:    "test",
 		HtmlBody:   "...",
 		TextBody:   "...",
 		Tag:        "pw-reset",
