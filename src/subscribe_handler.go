@@ -21,9 +21,12 @@ func SendWelcomeMail(mail string) error {
 	}
 	client := postmark.NewClient(serverApiSecret, accountApiSecret)
 
-	email := postmark.TemplatedEmail{
+	email := postmark.TemplatedEmail {
 		TemplateId: 20032898,
 		InlineCss: true,
+		TemplateModel: map[string]interface{}{
+			"userName": "bobby joe",
+		},
 		From:      "do-not-reply@tldr.cloud",
 		To:        mail,
 	}
