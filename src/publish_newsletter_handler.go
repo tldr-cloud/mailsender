@@ -2,7 +2,6 @@ package p
 
 import (
 	"context"
-	"log"
 )
 
 // PubSubMessage is the payload of a Pub/Sub event. Please refer to the docs for
@@ -12,6 +11,13 @@ type PubSubMessage struct {
 }
 
 func PublishNewsletter(ctx context.Context, m PubSubMessage) error {
-	log.Println(string(m.Data))
+	newsletterId := string(m.Data)
+	newletter, err := GetNewsletterById(newsletterId)
+	if err != nil {
+		return err
+	}
+	for _, tldrId := range newletter.NewsIds {
+
+	}
 	return nil
 }

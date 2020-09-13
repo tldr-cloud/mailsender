@@ -6,35 +6,71 @@ import (
 )
 
 var newsletters *firestore.CollectionRef
+var tldrs *firestore.CollectionRef
 
-type news struct {
-	Title string  `json:"title"`
-	PicUrl string  `json:"pic_url"`
-	Text string  `json:"text"`
-	Url string  `json:"url"`
+type Newsletter struct {
+	NewsIds []string `json:"NewsIds"`
 }
 
-type newsletter struct {
-	News []news `json:"news"`
+type TLDR struct {
+	Summary string `json:"summary"`
+	Title string `json:"title"`
+	TopImage string `json:"top_image"`
+	Url string `json:"url"`
 }
 
 func MaybeInitNewslettersCollection() error {
 	ctx := context.Background()
 	if newsletters == nil {
-		firestoreClient, err := firestore.NewClient(ctx, projectId)
+		firestoreClient, err := firestore.NewClient(ctx, mailSenderProjectId)
 		if err != nil {
 			return err
 		}
 
 		newsletters = firestoreClient.Collection("newsletters")
 	}
+	if tldrs == nil {
+		firestoreClient, err := firestore.NewClient(ctx, tldrProjectId)
+		if err != nil {
+			return err
+		}
+
+		tldrs = firestoreClient.Collection("urls")
+	}
 	return nil
 }
 
-func GetListOfNewsForNewsletter(newsletterId string) (newsletter, error) {
+func GetNewsletterById(newsletterId string) (Newsletter, error) {
+	ctx := context.Background()
 	if err := MaybeInitNewslettersCollection(); err != nil {
-		return newsletter{}, err
+		return Newsletter{}, err
 	}
-	// TODO
-	return newsletter{}, nil
+	newsletterDoc := newsletters.Doc(newsletterId)
+	newsletterDocSnap, err := newsletterDoc.Get(ctx)
+	if err != nil {
+		return Newsletter{}, err
+	}
+	var newsletter Newsletter
+	if err := newsletterDocSnap.DataTo(&newsletter); err != nil {
+		return Newsletter{}, err
+	}
+	return newsletter, nil
 }
+
+func GetNewsById(tldrId string) (TLDR, error) {
+	ctx := context.Background()
+	if err := MaybeInitNewslettersCollection(); err != nil {
+		return TLDR{}, err
+	}
+	tldrDoc := newsletters.Doc(tldrId)
+	tldrDocSnap, err := tldrDoc.Get(ctx)
+	if err != nil {
+		return TLDR{}, err
+	}
+	var tldr TLDR
+	if err := tldrDocSnap.DataTo(&tldr); err != nil {
+		return TLDR{}, err
+	}
+	return tldr, nil
+}
+

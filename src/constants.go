@@ -1,3 +1,4 @@
 package p
 
-const projectId = "mailsender-288100"
+const mailSenderProjectId = "mailsender-288100"
+const tldrProjectId = "tldr-278619"

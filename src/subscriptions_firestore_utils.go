@@ -12,7 +12,7 @@ var subscribers *firestore.CollectionRef
 func MaybeInit() error {
 	ctx := context.Background()
 	if subscribers == nil {
-		firestoreClient, err := firestore.NewClient(ctx, projectId)
+		firestoreClient, err := firestore.NewClient(ctx, mailSenderProjectId)
 		if err != nil {
 			return err
 		}
