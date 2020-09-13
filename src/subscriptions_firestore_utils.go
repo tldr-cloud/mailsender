@@ -22,6 +22,33 @@ func MaybeInit() error {
 	return nil
 }
 
+func GetMailLists() ([]string, error) {
+	ctx := context.Background()
+	err := MaybeInit()
+	if err != nil {
+		return nil, err
+	}
+	iter := subscribers.Documents(ctx)
+
+	mails := make([]string, 5)
+
+	for {
+		subscriber, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		mail, err := subscriber.DataAt("email")
+		if err != nil {
+			return nil, err
+		}
+		mails = append(mails, mail.(string))
+	}
+	return mails, nil
+}
+
 func AlreadySubscribed(mail string) (bool, error) {
 	ctx := context.Background()
 	err := MaybeInit()
