@@ -2,12 +2,23 @@ package main
 
 import (
 	"fmt"
-	mailsender "tldr.cloud/mailsender"
+	"github.com/sendgrid/sendgrid-go"
+	"github.com/sendgrid/sendgrid-go/helpers/mail"
+	"log"
 )
 
 func main() {
-	if err := mailsender.SendWelcomeMail("viacheslav@kovalevskyi.com"); err != nil {
-		fmt.Println(err.Error())
+	from := mail.NewEmail("Example User", "newsletter@tldr.cloud")
+	subject := "Sending with SendGrid is Fun"
+	to := mail.NewEmail("Example User", "viacheslav@kovalevskyi.com")
+	plainTextContent := "and easy to do anywhere, even with Go"
+	htmlContent := "<strong>and easy to do anywhere, even with Go</strong>"
+	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
+	client := sendgrid.NewSendClient("TODO")
+	response, err := client.Send(message)
+	if err != nil {
+		log.Println(err)
+	} else {
+		fmt.Println(response)
 	}
-	fmt.Println("done")
 }

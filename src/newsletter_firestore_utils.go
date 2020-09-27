@@ -9,14 +9,15 @@ var newsletters *firestore.CollectionRef
 var tldrs *firestore.CollectionRef
 
 type Newsletter struct {
-	NewsIds []string `json:"NewsIds"`
+	NewsIds []string `firestore:"news_ids"`
+	Test bool `firestore:"test"`
 }
 
 type TLDR struct {
-	Summary string `json:"summary"`
-	Title string `json:"title"`
-	TopImage string `json:"top_image"`
-	Url string `json:"url"`
+	Summary string `firestore:"summary"`
+	Title string `firestore:"title"`
+	TopImage string `firestore:"top_image"`
+	Url string `firestore:"url"`
 }
 
 func MaybeInitNewslettersCollection() error {
@@ -57,12 +58,12 @@ func GetNewsletterById(newsletterId string) (Newsletter, error) {
 	return newsletter, nil
 }
 
-func GetNewsById(tldrId string) (TLDR, error) {
+func GetTldrById(tldrId string) (TLDR, error) {
 	ctx := context.Background()
 	if err := MaybeInitNewslettersCollection(); err != nil {
 		return TLDR{}, err
 	}
-	tldrDoc := newsletters.Doc(tldrId)
+	tldrDoc := tldrs.Doc(tldrId)
 	tldrDocSnap, err := tldrDoc.Get(ctx)
 	if err != nil {
 		return TLDR{}, err

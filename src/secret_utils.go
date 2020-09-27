@@ -13,7 +13,7 @@ func accessSecretVersion(secretName string) (string, error) {
 	ctx := context.Background()
 	client, err := secretmanager.NewClient(ctx)
 	if err != nil {
-		return "", errors.New(fmt.Sprint("failed to create secretmanager client: %v", err))
+		return "", errors.New(fmt.Sprintf("failed to create secretmanager client: %v", err))
 	}
 
 	// Build the request.
@@ -24,7 +24,7 @@ func accessSecretVersion(secretName string) (string, error) {
 	// Call the API.
 	result, err := client.AccessSecretVersion(ctx, req)
 	if err != nil {
-		return "", errors.New(fmt.Sprint("failed to access secret version: %v", err))
+		return "", errors.New(fmt.Sprintf("failed to access secret version: %v", err))
 	}
 
 	return string(result.Payload.Data), nil
