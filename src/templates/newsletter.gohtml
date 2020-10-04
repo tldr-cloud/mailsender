@@ -1,5 +1,11 @@
 <html>
     <body>
-        {{.}}
+    {{range .}}
+        <a href="{{.Url}}">{{.Title}}</a>
+        <img src="{{.TopImage}}">
+        <div>
+            {{.Summary}}
+        </div>
+    {{end}}
     </body>
 </html>

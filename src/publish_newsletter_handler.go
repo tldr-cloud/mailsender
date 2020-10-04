@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"html/template"
-	"time"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
+	"html/template"
 	"log"
+	"time"
 )
 
 // PubSubMessage is the payload of a Pub/Sub event. Please refer to the docs for
@@ -16,7 +16,6 @@ import (
 type PubSubMessage struct {
 	Data []byte `json:"data"`
 }
-
 
 func SendNewsletter(newsletterHtml string) error {
 	toMails := make([]*mail.Email, 0)
@@ -45,7 +44,7 @@ func SendNewsletter(newsletterHtml string) error {
 	for _, mailToSend := range mailsToSend {
 		client.Send(mailToSend)
 	}
- 	return nil
+	return nil
 }
 
 func PubSubMessageHandler(ctx context.Context, m PubSubMessage) error {
@@ -58,29 +57,28 @@ func PubSubMessageHandler(ctx context.Context, m PubSubMessage) error {
 	return nil
 }
 
-
-func ConvertTldrToHtml(tldrId string) (template.HTML, error) {
-	newsTemplate, err := template.ParseFiles("templates/news.gohtml")
-	if err != nil {
-		log.Printf("new.gohtml can't be parsed due to the error: %s\n",
-			err.Error())
-		return "", err
-	}
-
-	var buf bytes.Buffer
-	tldr, err := GetTldrById(tldrId)
-	if err != nil {
-		log.Printf("tldr with id: %s can't be converted to HTML due to error: %s",
-			tldrId, err.Error())
-		return "", err
-	}
-	if err = newsTemplate.Execute(&buf, tldr); err != nil {
-		log.Printf("hatpm teplate can' be applied to tldr with id: %s due to error: %s\n",
-			tldrId, err.Error())
-		return "", err
-	}
-	return template.HTML(buf.String()), nil
-}
+//func ConvertTldrToHtml(tldrId string) (string, error) {
+//	newsTemplate, err := template.ParseFiles("templates/news.gohtml")
+//	if err != nil {
+//		log.Printf("new.gohtml can't be parsed due to the error: %s\n",
+//			err.Error())
+//		return "", err
+//	}
+//
+//	var buf bytes.Buffer
+//	tldr, err := GetTldrById(tldrId)
+//	if err != nil {
+//		log.Printf("tldr with id: %s can't be converted to HTML due to error: %s",
+//			tldrId, err.Error())
+//		return "", err
+//	}
+//	if err = newsTemplate.Execute(&buf, tldr); err != nil {
+//		log.Printf("hatpm teplate can' be applied to tldr with id: %s due to error: %s\n",
+//			tldrId, err.Error())
+//		return "", err
+//	}
+//	return buf.String(), nil
+//}
 
 func ConvertNewsletterToHtml(newsletterId string) (string, error) {
 	fmt.Printf("starting convertions for the newsletter with id: %s", newsletterId)
@@ -91,9 +89,9 @@ func ConvertNewsletterToHtml(newsletterId string) (string, error) {
 		return "", err
 	}
 	fmt.Printf("for news with id: %s amount of tldrs is: %d", newsletterId, len(newsletter.NewsIds))
-	records := make([]template.HTML, len(newsletter.NewsIds))
+	records := make([]TLDR, len(newsletter.NewsIds))
 	for index, tldrId := range newsletter.NewsIds {
-		if records[index], err = ConvertTldrToHtml(tldrId); err != nil {
+		if records[index], err = GetTldrById(tldrId); err != nil {
 			return "", err
 		}
 		fmt.Printf("news with index %d got converted to: %s\n", index, records[index])
