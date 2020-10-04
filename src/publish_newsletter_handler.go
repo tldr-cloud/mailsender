@@ -18,15 +18,17 @@ type PubSubMessage struct {
 }
 
 func SendNewsletter(newsletterHtml string) error {
+	fmt.Println("Sending letters")
 	toMails := make([]*mail.Email, 0)
 	toMailsStrings, err := GetMailLists()
 	if err != nil {
 		return err
 	}
 	for _, mailString := range toMailsStrings {
+		fmt.Printf("mail string from the DB: %s\n", mailString)
 		toMails = append(toMails, mail.NewEmail("", mailString))
 	}
-	sendGridApiKey, err := accessSecretVersion("sendgrid-com-newsletter-apikey")
+	sendGridApiKey, err := accessSecretVersion(sengridComNewsletterApiKeyName)
 	if err != nil {
 		return err
 	}
@@ -34,51 +36,34 @@ func SendNewsletter(newsletterHtml string) error {
 	from := mail.NewEmail("TLDR Newsletter", "newsletter@tldr.cloud")
 	subject := fmt.Sprintf("newsletter for: %s", now.String())
 
-	mailsToSend := make([]*mail.SGMailV3, len(toMails))
+	mailsToSend := make([]*mail.SGMailV3, 0)
 	for _, toMail := range toMails {
+		fmt.Printf("Mail to send to from the DB: %s\n", toMail)
 		mailsToSend = append(mailsToSend,
-			mail.NewSingleEmail(from, subject, toMail, "", newsletterHtml))
+			mail.NewSingleEmail(from, subject, toMail, "Hello!", newsletterHtml))
 	}
 
 	client := sendgrid.NewSendClient(sendGridApiKey)
-	for _, mailToSend := range mailsToSend {
-		client.Send(mailToSend)
+	for number, mailToSend := range mailsToSend {
+		fmt.Printf("Sending mail number: %d\n", number)
+		resp, err := client.Send(mailToSend)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("resp from the sendgrid: %s\n", resp.Body)
 	}
 	return nil
 }
 
 func PubSubMessageHandler(ctx context.Context, m PubSubMessage) error {
 	newsletterId := string(m.Data)
-	fmt.Printf("news letter with id: %s received\n", newsletterId)
+	fmt.Printf("newsletter with id: %s received\n", newsletterId)
 	if err := PublishNewsletter(newsletterId); err != nil {
 		log.Printf("main error for the id: %s is %s\n", newsletterId, err.Error())
 		return err
 	}
 	return nil
 }
-
-//func ConvertTldrToHtml(tldrId string) (string, error) {
-//	newsTemplate, err := template.ParseFiles("templates/news.gohtml")
-//	if err != nil {
-//		log.Printf("new.gohtml can't be parsed due to the error: %s\n",
-//			err.Error())
-//		return "", err
-//	}
-//
-//	var buf bytes.Buffer
-//	tldr, err := GetTldrById(tldrId)
-//	if err != nil {
-//		log.Printf("tldr with id: %s can't be converted to HTML due to error: %s",
-//			tldrId, err.Error())
-//		return "", err
-//	}
-//	if err = newsTemplate.Execute(&buf, tldr); err != nil {
-//		log.Printf("hatpm teplate can' be applied to tldr with id: %s due to error: %s\n",
-//			tldrId, err.Error())
-//		return "", err
-//	}
-//	return buf.String(), nil
-//}
 
 func ConvertNewsletterToHtml(newsletterId string) (string, error) {
 	fmt.Printf("starting convertions for the newsletter with id: %s", newsletterId)
@@ -107,11 +92,15 @@ func ConvertNewsletterToHtml(newsletterId string) (string, error) {
 }
 
 func PublishNewsletter(newsletterId string) error {
-	fmt.Printf("news letter with id: %s received", newsletterId)
+	fmt.Printf("newsletter with id: %s received\n", newsletterId)
 	html, err := ConvertNewsletterToHtml(newsletterId)
 	if err != nil {
+		fmt.Printf("Error: %s\n", err.Error())
 		return err
 	}
-	SendNewsletter(html)
+	if err = SendNewsletter(html); err != nil {
+		fmt.Printf("Error: %s\n", err.Error())
+		return err
+	}
 	return nil
 }

@@ -30,7 +30,7 @@ func GetMailLists() ([]string, error) {
 	}
 	iter := subscribers.Documents(ctx)
 
-	mails := make([]string, 5)
+	mails := make([]string, 0)
 
 	for {
 		subscriber, err := iter.Next()

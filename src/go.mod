@@ -1,4 +1,4 @@
-module tldr.cloud/mailsender
+module github.com/tldr-cloud/mailsender
 
 go 1.13
 

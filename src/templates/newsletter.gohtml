@@ -1,10 +1,12 @@
 <html>
     <body>
     {{range .}}
-        <a href="{{.Url}}">{{.Title}}</a>
-        <img src="{{.TopImage}}">
         <div>
-            {{.Summary}}
+            <a href="{{.Url}}">{{.Title}}</a>
+            <img src="{{.TopImage}}">
+            <div>
+                {{.Summary}}
+            </div>
         </div>
     {{end}}
     </body>
