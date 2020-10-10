@@ -3,5 +3,5 @@ package main
 import p "github.com/tldr-cloud/mailsender"
 
 func main() {
-	p.PublishNewsletter("20200927161650")
+	p.PublishNewsletter("20201010130022")
 }

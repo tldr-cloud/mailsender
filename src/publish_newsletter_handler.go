@@ -50,7 +50,8 @@ func SendNewsletter(newsletterHtml string) error {
 		if err != nil {
 			return err
 		}
-		fmt.Printf("resp from the sendgrid: %s\n", resp.Body)
+		fmt.Printf("resp body from the sendgrid: %s\n", resp.Body)
+		fmt.Printf("resp StatusCode from the sendgrid: %d\n", resp.StatusCode)
 	}
 	return nil
 }
