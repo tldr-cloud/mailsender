@@ -9,7 +9,17 @@ import (
 	"html/template"
 	"log"
 	"time"
+	"os"
 )
+
+const gcloudFuncSourceDir = "serverless_function_source_code"
+
+func FixDir() {
+	fileInfo, err := os.Stat(gcloudFuncSourceDir)
+	if err == nil && fileInfo.IsDir() {
+		_ = os.Chdir(gcloudFuncSourceDir)
+	}
+}
 
 // PubSubMessage is the payload of a Pub/Sub event. Please refer to the docs for
 // additional information regarding Pub/Sub events.
@@ -93,6 +103,7 @@ func ConvertNewsletterToHtml(newsletterId string) (string, error) {
 }
 
 func PublishNewsletter(newsletterId string) error {
+	FixDir()
 	fmt.Printf("newsletter with id: %s received\n", newsletterId)
 	html, err := ConvertNewsletterToHtml(newsletterId)
 	if err != nil {
