@@ -12,6 +12,8 @@ import (
 	"os"
 )
 
+const newsletterDateLayout = "January 2, 2006"
+
 const gcloudFuncSourceDir = "serverless_function_source_code"
 
 func FixDir() {
@@ -44,7 +46,7 @@ func SendNewsletter(newsletterHtml string) error {
 	}
 	now := time.Now()
 	from := mail.NewEmail("TLDR Newsletter", "newsletter@tldr.cloud")
-	subject := fmt.Sprintf("newsletter for: %s", now.String())
+	subject := fmt.Sprintf("newsletter for: %s", now.Format(newsletterDateLayout))
 
 	mailsToSend := make([]*mail.SGMailV3, 0)
 	for _, toMail := range toMails {
