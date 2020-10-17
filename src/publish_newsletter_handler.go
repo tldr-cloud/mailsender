@@ -3,6 +3,7 @@ package p
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
@@ -86,7 +87,10 @@ func ConvertNewsletterToHtml(newsletterId string) (string, error) {
 			newsletterId, err.Error())
 		return "", err
 	}
-	fmt.Printf("for news with id: %s amount of tldrs is: %d", newsletterId, len(newsletter.NewsIds))
+	fmt.Printf("for news with id: %s amount of tldrs is: %d\n", newsletterId, len(newsletter.NewsIds))
+	if len(newsletter.NewsIds) == 0 {
+		return "", errors.New(fmt.Sprintf("amount of TLDRs in newsleeter (id: %s) is 0", newsletterId))
+	}
 	records := make([]TLDR, len(newsletter.NewsIds))
 	for index, tldrId := range newsletter.NewsIds {
 		if records[index], err = GetTldrById(tldrId); err != nil {
