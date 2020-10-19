@@ -19,3 +19,5 @@
 
 out.gzip
 *.tfstate.backup*
+
+**/.DS_Store

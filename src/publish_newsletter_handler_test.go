@@ -3,8 +3,8 @@ package p
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
-	"testing"
 	"io/ioutil"
+	"testing"
 )
 
 func TestConvertNewsletterToHtml(t *testing.T) {
