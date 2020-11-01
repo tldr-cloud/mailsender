@@ -39,7 +39,7 @@ func SendWelcomeMail(mail string) error {
 }
 
 func ProcessNewSubscribeMsg(w http.ResponseWriter, r *http.Request) {
-	request, err := UnpackRequest(r)
+	request, err := UnpackSubscribeRequest(r)
 
 	if err != nil {
 		log.Println("error during the request unpack: ", err.Error())

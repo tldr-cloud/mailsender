@@ -3,7 +3,10 @@ package p
 import (
 	"cloud.google.com/go/firestore"
 	"context"
+	"errors"
 	"google.golang.org/api/iterator"
+	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -66,6 +69,16 @@ func AlreadySubscribed(mail string) (bool, error) {
 	return true, err
 }
 
+func GenerateCustomerConfirmationId() string {
+	const customerIdSize = 10
+	id := ""
+	seededRand := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i := 0; i < customerIdSize; i++ {
+		id = id + strconv.Itoa(seededRand.Intn(10))
+	}
+	return id
+}
+
 func AddMailToDB(mail string) error {
 	ctx := context.Background()
 	err := MaybeInit()
@@ -75,6 +88,8 @@ func AddMailToDB(mail string) error {
 	_, _, err = subscribers.Add(ctx, map[string]interface{}{
 		"email":    mail,
 		"subscribedDate": time.Now(),
+		"verified": false,
+		"verificationCode": GenerateCustomerConfirmationId(),
 	})
 	if err != nil {
 		return err
@@ -100,6 +115,48 @@ func RemoveMailFromDB(mail string) error {
 	_, err = record.Ref.Delete(ctx)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func GetMailVerificationCodeFromDb(mail string) (string, error) {
+	ctx := context.Background()
+	err := MaybeInit()
+	if err != nil {
+		return "", err
+	}
+	iter := subscribers.Where("email", "==", mail).Documents(ctx)
+	subscriber, err := iter.Next()
+	if err == iterator.Done {
+		return "", errors.New("no mail found")
+	}
+	if err != nil {
+		return "", err
+	}
+	code, err := subscriber.DataAt("verificationCode")
+	if err != nil {
+		return "", err
+	}
+	return code.(string), nil
+}
+
+func MarkMailAddressAsVerified(mail string) error {
+	ctx := context.Background()
+	err := MaybeInit()
+	if err != nil {
+		return err
+	}
+	iter := subscribers.Where("email", "==", mail).Limit(1).Documents(ctx)
+	subscriber, err := iter.Next()
+	if err == iterator.Done {
+		return errors.New("no mail found")
+	}
+	_, err = subscribers.Doc(subscriber.Ref.ID).Set(ctx,
+		map[string]interface{}{
+		"verified": true,
+	})
+	if err != nil {
+		return nil
 	}
 	return nil
 }

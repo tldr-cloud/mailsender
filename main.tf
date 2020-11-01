@@ -67,3 +67,15 @@ resource "google_cloudfunctions_function" "unsubscribe-handler" {
   source_archive_object = google_storage_bucket_object.code.name
 }
 
+resource "google_cloudfunctions_function" "subscribe-verification-handler" {
+  name                  = "subscribe-verification-handler"
+  available_memory_mb   = 128
+  runtime               = "go113"
+  entry_point           = "ProcessNewSubscribeConfirmationMsg"
+  trigger_http          = true
+  service_account_email = "mailsender@mailsender-288100.iam.gserviceaccount.com"
+  timeout               = 30
+
+  source_archive_bucket = google_storage_bucket_object.code.bucket
+  source_archive_object = google_storage_bucket_object.code.name
+}

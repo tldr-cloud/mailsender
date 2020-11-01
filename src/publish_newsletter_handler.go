@@ -53,7 +53,7 @@ func SendNewsletter(newsletterHtml string) error {
 	for _, toMail := range toMails {
 		fmt.Printf("Mail to send to from the DB: %s\n", toMail)
 		mailsToSend = append(mailsToSend,
-			mail.NewSingleEmail(from, subject, toMail, "Hello!", newsletterHtml))
+			mail.NewSingleEmail(from, subject, toMail, "Your daily update is here!", newsletterHtml))
 	}
 
 	client := sendgrid.NewSendClient(sendGridApiKey)
