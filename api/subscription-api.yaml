@@ -1,0 +1,42 @@
+swagger: '2.0'
+schemes:
+  - https
+info:
+  description: API For Subscribint and Un-subscribing to TLDR news
+  version: 1.0.0
+  title: TLDR-Subscription-API
+  # put the contact info for your development or API team
+  contact:
+    email: viacheslav@kovalevskyi.com
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+paths:
+  /subscribe:
+    post:
+      x-google-allow: all
+      x-google-backend:
+        address: "https://us-central1-mailsender-288100.cloudfunctions.net/subscribe-handler"
+      summary: subscribe to TLDR news
+      operationId: subscribe
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: SubscriptionRequest
+          schema:
+            $ref: '#/definitions/SubscriptionRequest'
+      responses:
+        201:
+          description: item created
+definitions:
+  SubscriptionRequest:
+    type: object
+    required:
+      - mail
+    properties:
+      mail:
+        type: string
+        example: my-mail@example.com
