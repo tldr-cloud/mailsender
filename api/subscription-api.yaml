@@ -14,7 +14,7 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 
 paths:
-  /subscribe:
+  /subscriptions:
     post:
       x-google-allow: all
       x-google-backend:
@@ -28,9 +28,29 @@ paths:
           name: SubscriptionRequest
           schema:
             $ref: '#/definitions/SubscriptionRequest'
+          required: true
       responses:
         201:
           description: item created
+  /subscriptions/{mail}/status:
+    get:
+      x-google-allow: all
+      x-google-backend:
+        address: "https://us-central1-mailsender-288100.cloudfunctions.net/subscribe-verification-handler"
+      summary: activate the subscriptions
+      operationId: activate
+      parameters:
+        - in: path
+          name: mail
+          type: "string"
+          required: true
+        - in: query
+          name: code
+          type: "string"
+          required: true
+      responses:
+        201:
+          description: activated
 definitions:
   SubscriptionRequest:
     type: object

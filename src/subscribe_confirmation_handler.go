@@ -1,11 +1,14 @@
 package p
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 )
 
 func ProcessNewSubscribeConfirmationMsg(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("values from the request:", r.Form.Encode())
+
 	codeFromRequest := GetSubscriptionConfirmationCodeFromRequest(r)
 	mail := GetSubscriptionMailFromQueryFromRequest(r)
 	codeFromDb, err := GetMailVerificationCodeFromDb(mail)
