@@ -46,7 +46,7 @@ func SendNewsletter(newsletterHtml string) error {
 		return err
 	}
 	now := time.Now()
-	from := mail.NewEmail("TLDR Newsletter", "newsletter@tldr.cloud")
+	from := mail.NewEmail("OverNews Journalist", "newsletter@over.news")
 	subject := fmt.Sprintf("newsletter for: %s", now.Format(newsletterDateLayout))
 
 	mailsToSend := make([]*mail.SGMailV3, 0)

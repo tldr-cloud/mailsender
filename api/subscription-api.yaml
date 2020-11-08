@@ -4,7 +4,7 @@ schemes:
 info:
   description: API For Subscribint and Un-subscribing to TLDR news
   version: 1.0.0
-  title: TLDR-Subscription-API
+  title: OverNews-Subscription-API
   # put the contact info for your development or API team
   contact:
     email: viacheslav@kovalevskyi.com
@@ -32,25 +32,21 @@ paths:
       responses:
         201:
           description: item created
-  /subscriptions/{mail}/status:
-    get:
+  /subscriptions/{mail}:
+    delete:
       x-google-allow: all
       x-google-backend:
         address: "https://us-central1-mailsender-288100.cloudfunctions.net/subscribe-verification-handler"
-      summary: activate the subscriptions
-      operationId: activate
+      summary: unsubscribe
+      operationId: unsubscribe
       parameters:
         - in: path
           name: mail
           type: "string"
           required: true
-        - in: query
-          name: code
-          type: "string"
-          required: true
       responses:
         201:
-          description: activated
+          description: deleted
 definitions:
   SubscriptionRequest:
     type: object

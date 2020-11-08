@@ -27,7 +27,7 @@ func SendWelcomeMail(mail string) error {
 		TemplateModel: map[string]interface{}{
 			"userName": "bobby joe",
 		},
-		From:      "do-not-reply@tldr.cloud",
+		From:      "do-not-reply@over.news",
 		To:        mail,
 	}
 
