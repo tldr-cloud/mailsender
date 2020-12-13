@@ -79,3 +79,17 @@ resource "google_cloudfunctions_function" "subscribe-verification-handler" {
   source_archive_bucket = google_storage_bucket_object.code.bucket
   source_archive_object = google_storage_bucket_object.code.name
 }
+
+resource "google_cloudfunctions_function_iam_member" "subscribe_handler_public_invoker" {
+  cloud_function = google_cloudfunctions_function.subscribe-handler.name
+
+  role = "roles/cloudfunctions.invoker"
+  member = "allUsers"
+}
+
+resource "google_cloudfunctions_function_iam_member" "unsubscribe_handler_public_invoker" {
+  cloud_function = google_cloudfunctions_function.unsubscribe-handler.name
+
+  role = "roles/cloudfunctions.invoker"
+  member = "allUsers"
+}
