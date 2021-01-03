@@ -40,6 +40,7 @@ func SendWelcomeMail(mail string) error {
 
 func ProcessNewSubscribeMsg(w http.ResponseWriter, r *http.Request) {
 	request, err := UnpackSubscribeRequest(r)
+	w.Header().Set("Access-Control-Allow-Origin", "http://over.news/")
 
 	if err != nil {
 		log.Println("error during the request unpack: ", err.Error())
@@ -75,18 +76,6 @@ func ProcessNewSubscribeMsg(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("request for the user: ", request.Mail, " been processed correctly")
-
-        // Set CORS headers for the preflight request
-        if r.Method == http.MethodOptions {
-                w.Header().Set("Access-Control-Allow-Origin", "http://over.news/")
-                w.Header().Set("Access-Control-Allow-Methods", "POST")
-                w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-                w.Header().Set("Access-Control-Max-Age", "3600")
-                w.WriteHeader(http.StatusNoContent)
-                return
-        }
-        // Set CORS headers for the main request.
-        w.Header().Set("Access-Control-Allow-Origin", "http://over.news/")
 
 	fmt.Fprint(w, html.EscapeString("done"))
 }
