@@ -41,6 +41,8 @@ func SendWelcomeMail(mail string) error {
 func ProcessNewSubscribeMsg(w http.ResponseWriter, r *http.Request) {
 	request, err := UnpackSubscribeRequest(r)
 	w.Header().Set("Access-Control-Allow-Origin", "http://over.news")
+	w.Header().Set("Access-Control-Allow-Headers", "*")
+	w.Header().Set("Access-Control-Allow-Method", "POST")
 
 	if err != nil {
 		log.Println("error during the request unpack: ", err.Error())
